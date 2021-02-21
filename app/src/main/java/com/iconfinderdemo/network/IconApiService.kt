@@ -20,4 +20,8 @@ class IconApiService {
         return api.getIconsListOfIconSet(iconSetId,count)
     }
 
+    fun getAllIconsOfIconSet(iconSetId: Int): Single<IconResponse>{
+        return api.getIconsListOfIconSet(iconSetId)
+    }
+
 }

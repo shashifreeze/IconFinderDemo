@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.iconfinderdemo.R
 import com.iconfinderdemo.model.IconSet
+import com.iconfinderdemo.util.Constants.KEY_ICON_COUNT
 import com.iconfinderdemo.util.Constants.KEY_ICON_SET_ID
 import com.iconfinderdemo.view.IconListActivity
 import kotlinx.android.synthetic.main.item_icon_set.view.*
@@ -40,6 +41,7 @@ class IconSetAdapter(var context: Context) : PagedListAdapter<IconSet, IconSetAd
             holder.itemView.setOnClickListener {
                 val intent = Intent(context, IconListActivity::class.java)
                 intent.putExtra(KEY_ICON_SET_ID, iconSet.iconSetId)
+                intent.putExtra(KEY_ICON_COUNT, iconSet.iconsCount)
                 context.startActivity(intent)
             }
         }

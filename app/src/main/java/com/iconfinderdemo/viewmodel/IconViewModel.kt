@@ -14,7 +14,9 @@ import com.iconfinderdemo.network.IconApiService
 import com.iconfinderdemo.repository.IconDataSource
 import com.iconfinderdemo.repository.IconDataSourceFactory
 import io.reactivex.disposables.CompositeDisposable
-
+/*
+Not using this class as pagination was not working properly with this class for icons list
+ */
 class IconViewModel(): ViewModel() {
 
      lateinit var iconPagedList : LiveData<PagedList<Icon>>

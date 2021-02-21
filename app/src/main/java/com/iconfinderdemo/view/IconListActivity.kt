@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,41 +15,49 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.iconfinderdemo.R
-import com.iconfinderdemo.adapters.IconAdapter
+import com.iconfinderdemo.adapters.IconListAdapter
+import com.iconfinderdemo.model.Icon
+import com.iconfinderdemo.util.Constants.KEY_ICON_COUNT
 import com.iconfinderdemo.util.Constants.KEY_ICON_SET_ID
 import com.iconfinderdemo.util.Constants.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.iconfinderdemo.util.Downloader
 import com.iconfinderdemo.util.downloadImage
-import com.iconfinderdemo.viewmodel.IconViewModel
+import com.iconfinderdemo.viewmodel.ListViewModel
 import kotlinx.android.synthetic.main.activity_icon_list.*
 
 class IconListActivity : AppCompatActivity(),Downloader {
-    lateinit var iconViewModel: IconViewModel
-    lateinit var iconAdapter: IconAdapter
+    lateinit var iconViewModel: ListViewModel
+    lateinit var iconAdapter: IconListAdapter
     lateinit var imageUrl : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_icon_list)
         val iconSetId = intent.getIntExtra(KEY_ICON_SET_ID, 0)
+        val totalIconCount = intent.getIntExtra(KEY_ICON_COUNT, 10)
         //getting viewmodel object
-        iconViewModel = ViewModelProviders.of(this).get(IconViewModel::class.java)
-        iconViewModel.initViewModel(iconSetId)
-        iconAdapter = IconAdapter(applicationContext,this)
+        iconViewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
+        //iconViewModel.initViewModel(iconSetId)
+        iconViewModel.refresh(iconSetId,totalIconCount)
+        iconAdapter = IconListAdapter(ArrayList<Icon>(),this)
         val mlayoutManager = GridLayoutManager(applicationContext,4)
 
         iconRV.apply {
             layoutManager = mlayoutManager
             adapter = iconAdapter
         }
+        //observe model live data
         observeViewModel()
     }
 
     private fun observeViewModel() {
         iconViewModel.loading.postValue(true)
         iconViewModel.iconLoadError.postValue(false)
-        iconViewModel.iconPagedList.observe(this, Observer {
-            iconAdapter.submitList(it)
-            iconRV.visibility= View.VISIBLE
+//        iconViewModel.iconPagedList.observe(this, Observer {
+//            iconAdapter.submitList(it)
+//            iconRV.visibility= View.VISIBLE
+//        })
+        iconViewModel.icons.observe(this, Observer {
+            iconAdapter.updateIcons(it)
         })
 
         iconViewModel.loading.observe(this, Observer {
@@ -81,6 +90,7 @@ class IconListActivity : AppCompatActivity(),Downloader {
             askPermissions(imageUrl)
         } else {
             downloadImage(imageUrl)
+            Toast.makeText(applicationContext,"Icon will be downloaded in Picture directory",Toast.LENGTH_LONG).show()
         }
     }
 
