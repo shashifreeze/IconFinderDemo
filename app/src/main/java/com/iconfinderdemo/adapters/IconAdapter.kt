@@ -19,7 +19,9 @@ import com.iconfinderdemo.util.loadImage
 import com.iconfinderdemo.view.IconListActivity
 import kotlinx.android.synthetic.main.item_icon.view.*
 import kotlinx.android.synthetic.main.item_icon_set.view.*
-
+/*
+Not using this class as pagination was not working properly with this class for icons list
+ */
 class IconAdapter(var context: Context,var downloader: Downloader) : PagedListAdapter<Icon, IconAdapter.ViewHolder>(diffCallback) {
 
     companion object {
