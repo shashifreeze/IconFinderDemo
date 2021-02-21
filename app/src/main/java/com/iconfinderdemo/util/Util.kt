@@ -16,7 +16,7 @@ import java.io.File
 fun getProgressDrawable(context: Context): CircularProgressDrawable {
     return CircularProgressDrawable(context).apply {
         strokeWidth = 10f
-        centerRadius = 50f
+        centerRadius = 30f
         start()
     }
 }
