@@ -6,30 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagedList
-import com.iconfinderdemo.model.Icon
 import com.iconfinderdemo.repository.IconSetDataSource
 import com.iconfinderdemo.repository.IconSetDataSourceFactory
 import com.iconfinderdemo.model.IconSet
 import com.iconfinderdemo.network.IconApiService
-import com.iconfinderdemo.repository.IconDataSource
-import com.iconfinderdemo.repository.IconDataSourceFactory
 import io.reactivex.disposables.CompositeDisposable
 
-class IconViewModel(): ViewModel() {
+class IconSetViewModel: ViewModel() {
 
-     lateinit var iconPagedList : LiveData<PagedList<Icon>>
-     private lateinit var liveDataSource : LiveData<PageKeyedDataSource<Int,Icon>>
+     var iconPagedList : LiveData<PagedList<IconSet>>
+     private var liveDataSource : LiveData<PageKeyedDataSource<Int,IconSet>>
      private var compositeDisposable:CompositeDisposable = CompositeDisposable()
      public var iconLoadError = MutableLiveData<Boolean>()
      public var loading = MutableLiveData<Boolean>()
 
-    fun initViewModel(iconSetId:Int){
+    init {
         val iconApiService=IconApiService()
-        val  iconDataSourceFactory = IconDataSourceFactory(iconApiService,compositeDisposable,iconSetId)
+        val  iconDataSourceFactory = IconSetDataSourceFactory(iconApiService,compositeDisposable)
         liveDataSource = iconDataSourceFactory.iconLiveDataSource
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
-            .setPageSize(IconDataSource.PAGE_SIZE)
+            .setPageSize(IconSetDataSource.PAGE_SIZE)
             .build()
         iconPagedList= LivePagedListBuilder(iconDataSourceFactory,config).build()
         iconLoadError = iconDataSourceFactory.iconSetDataSource.iconLoadError

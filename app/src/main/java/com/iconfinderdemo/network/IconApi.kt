@@ -18,10 +18,10 @@ interface IconApi {
     fun getIconSets(@Query("count") count: Int ): Single<IconSetResponse>
 
     @GET("iconsets/{iconset_id}/icons")
-    fun getIconsList(
+    fun getIconsListOfIconSet(
         @Path("iconset_id") iconSetId: Int,
         @Query("count") count: Int
-    ): Call<IconResponse>
+    ): Single<IconResponse>
 
     @GET("icons/search")
     fun search(

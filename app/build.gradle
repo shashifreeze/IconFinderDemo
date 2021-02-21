@@ -59,6 +59,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     //GLIDE
     implementation "com.github.bumptech.glide:glide:$glideVersion"
+    //Refresh layout
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation "android.arch.lifecycle:extensions:$lifeCycleExtensionVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

@@ -2,21 +2,20 @@ package com.iconfinderdemo.repository
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.iconfinderdemo.model.Icon
 import com.iconfinderdemo.model.IconSet
 import com.iconfinderdemo.network.IconApiService
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class IconDataSource(
+class IconSetDataSource(
     private val iconApiSerive: IconApiService,
-    private val disposable: CompositeDisposable,
-    private val iconSetId: Int
+    private val disposable: CompositeDisposable
 ) :
-    PageKeyedDataSource<Int, Icon>() {
+    PageKeyedDataSource<Int, IconSet>() {
     companion object {
-        val PAGE_SIZE = 16
+        val PAGE_SIZE = 15
         val FIRST_PAGE = 1
+        var LAST_ICON_SET_ID = 0
     }
 
     val iconLoadError = MutableLiveData<Boolean>()
@@ -24,16 +23,17 @@ class IconDataSource(
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Icon>
+        callback: LoadInitialCallback<Int, IconSet>
     ) {
         disposable.add(
-            iconApiSerive.getAllIconsOfIconSet(iconSetId,PAGE_SIZE).subscribeOn(Schedulers.io())
+            iconApiSerive.getIconSets(PAGE_SIZE).subscribeOn(Schedulers.io())
                 .subscribe({
                     //No Error got success
                     iconLoadError.postValue(false)
                     //stop loading
                     loading.postValue(false)
-                    callback.onResult(it.icons, null, FIRST_PAGE + 1)
+                    LAST_ICON_SET_ID = it.iconSets.last().iconSetId
+                    callback.onResult(it.iconSets, null, FIRST_PAGE + 1)
                 }
                 ) {
                     //get error
@@ -44,10 +44,10 @@ class IconDataSource(
         )
     }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Icon>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, IconSet>) {
         loading.postValue(true)
         disposable.add(
-            iconApiSerive.getAllIconsOfIconSet(iconSetId,PAGE_SIZE).subscribeOn(Schedulers.io())
+            iconApiSerive.getIconSets(PAGE_SIZE, LAST_ICON_SET_ID).subscribeOn(Schedulers.io())
                 .subscribe({
                     it?.let {
                         val key = if (params.key > FIRST_PAGE) params.key - 1 else null
@@ -55,8 +55,8 @@ class IconDataSource(
                         iconLoadError.postValue(false)
                         //stop loading
                         loading.postValue(false)
-
-                        callback.onResult(it.icons, key)
+                        LAST_ICON_SET_ID = it.iconSets.last().iconSetId
+                        callback.onResult(it.iconSets, key)
                     }
                 },
                     {
@@ -69,19 +69,20 @@ class IconDataSource(
 
     }
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Icon>) {
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, IconSet>) {
         loading.postValue(true)
         disposable.add(
-            iconApiSerive.getAllIconsOfIconSet(iconSetId,PAGE_SIZE).subscribeOn(Schedulers.io())
+            iconApiSerive.getIconSets(PAGE_SIZE, LAST_ICON_SET_ID).subscribeOn(Schedulers.io())
                 .subscribe({
                     it?.let {
                         //getting last page key
-                        val key = if ((it.totalCount) > params.key) params.key + 1 else null
+                        val key = if (it.totalCount > params.key) params.key + 1 else null
                         //No Error got success
                         iconLoadError.postValue(false)
                         //stop loading
                         loading.postValue(false)
-                        callback.onResult(it.icons, key)
+                        LAST_ICON_SET_ID = it.iconSets.last().iconSetId
+                        callback.onResult(it.iconSets, key)
                     }
                 },
                     {

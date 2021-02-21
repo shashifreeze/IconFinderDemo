@@ -15,7 +15,7 @@
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_margin="16dp"
-    android:id="@+id/iconRV"
+    android:id="@+id/iconSetRV"
     tools:listitem="@layout/item_icon_set"
     android:layout_height="match_parent"/>
     <TextView
