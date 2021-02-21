@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">IconFinderDemo</string>
+    <string name="icons">icons</string>
+    <string name="icon_set_name">Icon Set Name</string>
+    <string name="icon_count">Icon Count</string>
+    <string name="loading_error">Loading error</string>
+</resources>
